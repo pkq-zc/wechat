@@ -46,7 +46,7 @@ public class WechatController {
      * @return
      */
     @PostMapping(value = "/receive",
-            consumes = MediaType.APPLICATION_XML_VALUE,
+            consumes = {MediaType.APPLICATION_XML_VALUE,MediaType.TEXT_XML_VALUE},
             produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public Object receiveMessage(@RequestBody ReceiveMessage message) {

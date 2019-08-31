@@ -1,12 +1,12 @@
 package com.buydeem.wechat.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * 微信工具类
@@ -14,6 +14,7 @@ import java.util.Objects;
  * @author zengchao
  * @date 2019/8/30
  */
+@Slf4j
 public final class WechatUtils {
 
     /**
@@ -25,10 +26,11 @@ public final class WechatUtils {
      * @return
      */
     public static boolean verify(String signature,String token, Long timestamp, Long nonce) {
-        List<? extends Serializable> list = Arrays.asList(timestamp, token, nonce);
         StringBuilder sb = new StringBuilder();
-        list.forEach(item -> sb.append(item.toString()));
-        byte[] sha1 = DigestUtils.sha1(sb.toString().getBytes(Charset.forName("utf-8")));
-        return Objects.equals(new String(sha1,Charset.forName("utf-8")),signature);
+        Stream.of(token,timestamp.toString(),nonce.toString()).sorted(String::compareTo).forEach(sb::append);
+        String sig = DigestUtils.sha1Hex(sb.toString().getBytes());
+        log.info("cal sign:{}",sig);
+        log.info("receive sing:{}",signature);
+        return Objects.equals(sig,signature);
     }
 }
